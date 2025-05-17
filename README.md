@@ -1,54 +1,18 @@
-# React + TypeScript + Vite
+Pasos para ejecutar Frontend:
+npm i para instalar todas las dependencias
+npm run dev para ejecutar el proyecto
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Pasos para ejecutar el backend:
+npx json-server --watch db.json --port 3001
 
-Currently, two official plugins are available:
+En el archivo .env se encuentra la unica variable de entorno para esta prueba
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Arquitectura usada:
+No se implemento alguna arquitectura, se implementó el patron de diseño compound components, el cual es uno de los
+mejores patrones de diseño para react, consiste en crear un contexto para tener todos los componente necesarios y evitar el uso de props porque se tendrian variables globales que las reemplacen.
+Y se utilizo custom hooks para logicas como las llamadas al backend y separarlas de la vista.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+Decisiones tecnicas:
+Para estados globales se implementó TanStack Query, es un gestor de estado que al contrar con su cache propio, permite reducir el guardado de datos que vienen del backend en la vista, mejorando el rendimiento y brindando facilidadde edición de la data obtenida sin tener que hacer uso de estados adicionales.
+Psra la validación de formulario de utilizó React Hook Form, una libreria que permite validar y manipular formularios fuera y dentro del componente que se requiere.
+Para estilos se utilizo TailwindCSS y Material UI.
