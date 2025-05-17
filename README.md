@@ -16,3 +16,4 @@ Decisiones tecnicas:
 Para estados globales se implementó TanStack Query, es un gestor de estado que al contrar con su cache propio, permite reducir el guardado de datos que vienen del backend en la vista, mejorando el rendimiento y brindando facilidadde edición de la data obtenida sin tener que hacer uso de estados adicionales.
 Psra la validación de formulario de utilizó React Hook Form, una libreria que permite validar y manipular formularios fuera y dentro del componente que se requiere.
 Para estilos se utilizo TailwindCSS y Material UI.
+Para simular backend se utilizo la libreria JSON server, la cual imita perfectamente el comportamiento api rest.
