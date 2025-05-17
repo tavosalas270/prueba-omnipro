@@ -1,0 +1,21 @@
+{
+  "projects": [
+    {
+      "id": "1",
+      "name": "Aplicación",
+      "active": true
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Investigar lenguajes",
+      "descripcion": "",
+      "endDate": "",
+      "status": "",
+      "priority": "",
+      "active": true,
+      "projectId": "1"
+    }
+  ]
+}
