@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, createTheme } from '@mui/material';
 import './App.css'
 import { MainPage } from "./MainPage";
-import { ProjectsMain, ProjectsPage, TaskMain } from "./pages";
+import { ProjectsMain, ProjectsPage, TaskPage, TaskMain } from "./pages";
 
 const queryClient = new QueryClient()
 
@@ -37,10 +37,12 @@ function App() {
         <BrowserRouter>
           <MainPage>
             <ProjectsPage>
-              <Routes>
-                <Route path="/" element={<ProjectsMain />} />
-                <Route path="/:projectId" element={<TaskMain />} />
-              </Routes>
+              <TaskPage>
+                <Routes>
+                  <Route path="/" element={<ProjectsMain />} />
+                  <Route path="/:projectId" element={<TaskMain />} />
+                </Routes>
+              </TaskPage>
             </ProjectsPage>
           </MainPage>
         </BrowserRouter>

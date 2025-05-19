@@ -1,96 +1,114 @@
-import { useFormContext } from "react-hook-form";
+import { useFormContext, Controller } from "react-hook-form";
 import { TextField, MenuItem } from "@mui/material";
 
 export const ModalCreateTask = () => {
   const {
     register,
     watch,
+    control,
     formState: { errors },
   } = useFormContext();
 
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="flex flex-col w-full h-full gap-y-2.5 pt-2">
       {/* Título */}
-      <TextField
-        label="Título"
-        variant="outlined"
-        value={watch("title")}
-        {...register("title", {
-          required: "Debe escribir un título para la tarea",
-        })}
-        error={!!errors.title}
-        helperText={typeof errors.title?.message === 'string' ? errors.title.message : undefined}
-        sx={commonStyles(!!errors.title)}
+      <Controller
+        name="title"
+        control={control}
+        rules={{ required: "Debe escribir un título para la tarea" }}
+        render={({ field, fieldState }) => (
+          <TextField
+            label="Título"
+            variant="outlined"
+            {...field}
+            error={!!fieldState.error}
+            helperText={fieldState.error?.message}
+            sx={commonStyles(!!errors.endDate)}
+          />
+        )}
       />
 
       {/* Descripción */}
-      <TextField
-        label="Descripción"
-        variant="outlined"
-        multiline
-        rows={3}
-        value={watch("descripcion")}
-        {...register("descripcion")}
-        sx={commonStyles()}
+      <Controller
+        name="descripcion"
+        control={control}
+        rules={{ required: "Debe escribir una descripción para la tarea" }}
+        render={({ field, fieldState }) => (
+          <TextField
+            label="Descripción"
+            multiline
+            rows={3}
+            variant="outlined"
+            {...field}
+            error={!!fieldState.error}
+            helperText={fieldState.error?.message}
+            sx={commonStyles(!!errors.endDate)}
+          />
+        )}
       />
 
       {/* Fecha de vencimiento */}
-      <TextField
-        label="Fecha de Vencimiento"
-        type="date"
-        variant="outlined"
-        value={watch("endDate")}
-        {...register("endDate")}
-        sx={commonStyles()}
+      <Controller
+        name="endDate"
+        control={control}
+        rules={{ required: "Debe escribir una fecha valida para la tarea" }}
+        render={({ field, fieldState }) => (
+          <TextField
+            label="Fecha de Vencimiento"
+            type="date"
+            variant="outlined"
+            {...field}
+            error={!!fieldState.error}
+            helperText={fieldState.error?.message}
+            sx={commonStyles(!!errors.endDate)}
+          />
+        )}
       />
 
-      {/* Estado */}
-      <TextField
-        select
-        label="Estado"
-        variant="outlined"
-        value={watch("status")}
-        {...register("status")}
-        sx={commonStyles()}
-      >
-        <MenuItem value="pendiente">Pendiente</MenuItem>
-        <MenuItem value="completada">Completada</MenuItem>
-      </TextField>
-
       {/* Prioridad */}
-      <TextField
-        select
-        label="Prioridad"
-        variant="outlined"
-        value={watch("priority")}
-        {...register("priority")}
-        sx={commonStyles()}
-      >
-        <MenuItem value="baja">Baja</MenuItem>
-        <MenuItem value="media">Media</MenuItem>
-        <MenuItem value="alta">Alta</MenuItem>
-      </TextField>
+      <Controller
+        name="priority"
+        control={control}
+        rules={{ required: "Debe seleccionar un nivel de prioridad para la tarea" }}
+        render={({ field, fieldState }) => (
+          <TextField
+            select
+            label="Prioridad"
+            variant="outlined"
+            {...field}
+            error={!!fieldState.error}
+            helperText={fieldState.error?.message}
+            sx={commonStyles(!!fieldState.error)}
+          >
+            <MenuItem value="">Selecciona una prioridad</MenuItem>
+            <MenuItem value="baja">Baja</MenuItem>
+            <MenuItem value="media">Media</MenuItem>
+            <MenuItem value="alta">Alta</MenuItem>
+          </TextField>
+        )}
+      />
     </div>
   );
 };
 
-// 🎨 Estilos reutilizables
 const commonStyles = (hasError?: boolean) => ({
-  width: "100%",
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "16px",
-    "& fieldset": {
-      borderWidth: "2px",
-      borderColor: hasError ? "#bd3838" : "#5e8cff",
+  width: '100%',
+  '& .MuiOutlinedInput-root': { 
+    borderRadius: '16px',
+    '& fieldset': {
+        borderWidth: '2px',
+        borderColor: '#5e8cff',
     },
-    "&:hover fieldset": {
-      borderColor: hasError ? "#bd3838" : "#00B261",
+    '&:hover fieldset': {
+        borderColor: hasError ? '#bd3838':'#00B261',
     },
-    "&.Mui-focused fieldset": {
-      borderColor: hasError ? "#bd3838" : "#00B261",
+    '&.Mui-focused fieldset': {
+        borderColor: hasError ? '#bd3838': '#00B261',
     },
-  },
-  "& .MuiInputLabel-root.Mui-focused": {
-    color: hasError ? "#bd3838" : "#00B261",
-  },
+},
+'& .MuiOutlinedInput-input::placeholder': { fontWeight: 600, color: "#d9d9d9" },
+'& .css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input': { paddingY: "10px" },
+'& .MuiInputLabel-root.Mui-focused': {
+    color: hasError ? '#bd3838': '#00B261',
+  }
 });

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { postTask, getTasksByProjectId, patchTask, deleteTask } from "../api";
-import { TaskList, CreateEditTask } from "../interfaces";
+import { TaskList, CreateTask } from "../interfaces";
 import { showSwal } from "../utils";
 import Swal from "sweetalert2";
 
@@ -10,6 +10,7 @@ interface DeleteTasks {
 }
 
 export const useGetTasks = (projectId:string) => {
+    console.log("ID Proyecto: ", projectId)
     const taskStateInitial = useQuery({
         queryKey: ["tasks-list", projectId],
         queryFn: () => getTasksByProjectId(projectId),
@@ -23,15 +24,15 @@ export const useGetTasks = (projectId:string) => {
     return taskStateInitial
 }
 
-export const usePostTasks = () => {
+export const usePostTasks = (projectId:string) => {
     const queryClient = useQueryClient();
     const projectState = useMutation({
-        mutationFn: (data:CreateEditTask) => postTask(data),
+        mutationFn: (data:CreateTask) => postTask(data),
         onMutate() {
             showSwal("info", "Creando Tarea")
         },
-        onSuccess(data, variables) {
-            queryClient.setQueryData<TaskList[]>(["tasks-list", variables.projectId], (old) => {
+        onSuccess(data) {
+            queryClient.setQueryData<TaskList[]>(["tasks-list", projectId], (old) => {
                 return old ? [...old, data] : [data];
             });
             showSwal("success", "Tarea creada", "La tarea fue añadida correctamente");
@@ -44,15 +45,15 @@ export const usePostTasks = () => {
     return projectState
 }
 
-export const useUpdateTasks = () => {
+export const useUpdateTasks = (projectId:string) => {
     const queryClient = useQueryClient();
     const updateTaskState = useMutation({
-        mutationFn: (data:CreateEditTask) => patchTask(data),
+        mutationFn: (data:TaskList) => patchTask(data),
         onMutate() {
             showSwal("info", "Actualizando Tarea")
         },
-        onSuccess(data,variables) {
-            queryClient.setQueryData<TaskList[]>(["tasks-list", variables.projectId], (old) => {
+        onSuccess(data) {
+            queryClient.setQueryData<TaskList[]>(["tasks-list", projectId], (old) => {
                 return old ? old.map((p) => (p.id === data.id ? data : p)) : [];
             });
             showSwal("success", "Tarea actualizado", "El tarea fue actualizado correctamente");
@@ -65,16 +66,16 @@ export const useUpdateTasks = () => {
     return updateTaskState
 }
 
-export const useDeleteTask = () => {
+export const useDeleteTask = (projectId:string) => {
     const queryClient = useQueryClient();
     const deleteTasksState = useMutation({
-        mutationFn: (data:DeleteTasks) => deleteTask(data.id),
+        mutationFn: (id:string) => deleteTask(id),
         onMutate() {
             showSwal("info", "Eliminando Tarea")
         },
-        onSuccess(data, variables) {
+        onSuccess(data) {
             Swal.close();
-            queryClient.setQueryData<TaskList[]>(["tasks-list", variables.proyectId], (old) =>
+            queryClient.setQueryData<TaskList[]>(["tasks-list", projectId], (old) =>
                 old ? old.filter((p) => p.id !== data.id) : []
             );
             showSwal("success", "Tarea Eliminado", "El Tarea fue eliminado correctamente");

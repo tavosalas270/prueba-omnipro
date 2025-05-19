@@ -27,5 +27,5 @@ export const ProjectsPage = ({children}: ChildrenProp) => {
 
     return (
         <ProjectContext.Provider value={providerValue}>{children}</ProjectContext.Provider>
-      )
+    )
 }

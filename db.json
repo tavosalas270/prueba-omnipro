@@ -4,18 +4,43 @@
       "id": "1",
       "name": "Aplicación",
       "active": true
+    },
+    {
+      "id": "50bb",
+      "name": "Nuevo Proyecto",
+      "active": true
     }
   ],
   "tasks": [
     {
       "id": "1",
-      "title": "Investigar lenguajes",
-      "descripcion": "",
-      "endDate": "",
-      "status": "",
-      "priority": "",
-      "active": true,
+      "title": "Actualizar",
+      "descripcion": "Probando",
+      "endDate": "2025-05-21",
+      "status": "Pendiente",
+      "priority": "baja",
+      "active": false,
       "projectId": "1"
+    },
+    {
+      "id": "b951",
+      "title": "Prueba",
+      "descripcion": "Proyecto",
+      "endDate": "2025-05-19",
+      "status": "Pendiente",
+      "priority": "baja",
+      "projectId": "1",
+      "active": true
+    },
+    {
+      "id": "22de",
+      "title": "Proyecto Mano",
+      "descripcion": "Viendo Mano",
+      "endDate": "2025-05-21",
+      "status": "Pendiente",
+      "priority": "baja",
+      "projectId": "50bb",
+      "active": false
     }
   ]
 }

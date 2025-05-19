@@ -1,9 +1,9 @@
-import { TaskList, CreateEditTask } from "../interfaces"
+import { TaskList, CreateTask } from "../interfaces"
 
 const domain = import.meta.env.VITE_API_URL
 
 export const getTasksByProjectId = async (projectId: string): Promise<TaskList[]> => {
-    const response = await fetch(`${domain}/tasks?projectId=${projectId}`);
+    const response = await fetch(`${domain}/tasks?projectId=${projectId}&active=true`);
   
     if (!response.ok) {
       throw new Error("Error al obtener las tareas");
@@ -13,7 +13,7 @@ export const getTasksByProjectId = async (projectId: string): Promise<TaskList[]
     return tasks;
 };
 
-export const postTask = async (newTask: CreateEditTask): Promise<TaskList> => {
+export const postTask = async (newTask: CreateTask): Promise<TaskList> => {
     const response = await fetch(`${domain}/tasks`, {
       method: 'POST',
       headers: {
@@ -33,7 +33,7 @@ export const postTask = async (newTask: CreateEditTask): Promise<TaskList> => {
     return createdTask;
 };
 
-export const patchTask = async (newTask: CreateEditTask): Promise<TaskList> => {
+export const patchTask = async (newTask: TaskList): Promise<TaskList> => {
     const response = await fetch(`${domain}/tasks/${newTask.id}`, {
       method: 'PATCH',
       headers: {
