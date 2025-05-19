@@ -1,16 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { postTask, getTasksByProjectId, patchTask, deleteTask } from "../api";
-import { TaskList, CreateTask } from "../interfaces";
+import { postTask, getTasksByProjectId, patchTask, deleteTask, patchTaskStatus } from "../api";
+import { TaskList, CreateTask, UpdateStatus } from "../interfaces";
 import { showSwal } from "../utils";
 import Swal from "sweetalert2";
 
-interface DeleteTasks {
-    id:string
-    proyectId:string
-}
-
 export const useGetTasks = (projectId:string) => {
-    console.log("ID Proyecto: ", projectId)
     const taskStateInitial = useQuery({
         queryKey: ["tasks-list", projectId],
         queryFn: () => getTasksByProjectId(projectId),
@@ -60,6 +54,23 @@ export const useUpdateTasks = (projectId:string) => {
         },
         onError() {
             showSwal("error", "Error", "No se pudo actualizar el tarea");
+        }
+    })
+
+    return updateTaskState
+}
+
+export const useUpdateTaskStatus = (projectId:string) => {
+    const queryClient = useQueryClient();
+    const updateTaskState = useMutation({
+        mutationFn: (data:UpdateStatus) => patchTaskStatus(data),
+        onSuccess(data) {
+            queryClient.setQueryData<TaskList[]>(["tasks-list", projectId], (old) => {
+                return old ? old.map((p) => (p.id === data.id ? data : p)) : [];
+            });
+        },
+        onError() {
+            showSwal("error", "Error", "No se pudo actualizar el estado de tarea");
         }
     })
 

@@ -2,16 +2,10 @@ import { useFormContext, Controller } from "react-hook-form";
 import { TextField, MenuItem } from "@mui/material";
 
 export const ModalCreateTask = () => {
-  const {
-    register,
-    watch,
-    control,
-    formState: { errors },
-  } = useFormContext();
+  const { control, formState: { errors } } = useFormContext();
 
   return (
     <div className="flex flex-col w-full h-full gap-y-2.5 pt-2">
-      {/* Título */}
       <Controller
         name="title"
         control={control}
@@ -28,44 +22,49 @@ export const ModalCreateTask = () => {
         )}
       />
 
-      {/* Descripción */}
       <Controller
         name="descripcion"
         control={control}
-        rules={{ required: "Debe escribir una descripción para la tarea" }}
-        render={({ field, fieldState }) => (
+        render={({ field }) => (
           <TextField
             label="Descripción"
             multiline
             rows={3}
             variant="outlined"
             {...field}
-            error={!!fieldState.error}
-            helperText={fieldState.error?.message}
-            sx={commonStyles(!!errors.endDate)}
+            sx={commonStyles()}
           />
         )}
       />
 
-      {/* Fecha de vencimiento */}
       <Controller
         name="endDate"
         control={control}
-        rules={{ required: "Debe escribir una fecha valida para la tarea" }}
-        render={({ field, fieldState }) => (
+        render={({ field }) => (
           <TextField
             label="Fecha de Vencimiento"
             type="date"
             variant="outlined"
             {...field}
-            error={!!fieldState.error}
-            helperText={fieldState.error?.message}
-            sx={commonStyles(!!errors.endDate)}
+            sx={{
+              ...commonStyles(),
+              '& input::placeholder': {
+                color: 'transparent',
+              },
+              '& input': {
+                color: field.value ? 'inherit' : 'transparent',
+              },
+              '& input:focus': {
+                color: 'inherit',
+              },
+              '& label': {
+                zIndex: 1,
+              }
+            }}
           />
         )}
       />
 
-      {/* Prioridad */}
       <Controller
         name="priority"
         control={control}

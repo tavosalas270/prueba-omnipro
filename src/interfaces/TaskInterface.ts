@@ -1,5 +1,10 @@
-export type Status = "Pendiente" | "Completada"
+export type Status = "Pendiente" | "Completada" | ""
 export type Action = "POST" | "PUT"
+
+export interface UpdateStatus {
+    id:string;
+    status: Status
+}
 
 export interface TaskList {
     id: string;
@@ -20,4 +25,8 @@ export interface TaskProvider {
     handleAction: (action:Action) => void;
     valuesSelected: TaskList;
     handleValuesSelected: (values:TaskList) => void;
+    statusFilter: Status;
+    handleStatus: (values:Status) => void;
+    priorityFilter: string;
+    handlePriority: (values:string) => void;
 }

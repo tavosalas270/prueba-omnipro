@@ -1,4 +1,4 @@
-import { TaskList, CreateTask } from "../interfaces"
+import { TaskList, CreateTask, UpdateStatus } from "../interfaces"
 
 const domain = import.meta.env.VITE_API_URL
 
@@ -48,6 +48,23 @@ export const patchTask = async (newTask: TaskList): Promise<TaskList> => {
   
     const updatedTask = await response.json();
     return updatedTask;
+};
+
+export const patchTaskStatus = async (data:UpdateStatus): Promise<TaskList> => {
+  const response = await fetch(`${domain}/tasks/${data.id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ status: data.status })
+  });
+
+  if (!response.ok) {
+    throw new Error('Error al actualizar el estado de la tarea');
+  }
+
+  const updatedTask = await response.json();
+  return updatedTask;
 };
 
 export const deleteTask = async (id: string): Promise<TaskList> => {

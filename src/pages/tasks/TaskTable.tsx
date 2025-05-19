@@ -1,26 +1,23 @@
-import { TextField, InputAdornment, IconButton, Button, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import CloseIcon from '@mui/icons-material/Close';
-import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+import { IconButton, Tooltip, Switch } from '@mui/material';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import { useQueryClient } from '@tanstack/react-query';
-import { ProjectList, TaskList, CreateTask } from '../../interfaces';
-import { useDeleteTask } from '../../hooks';
-import Swal from 'sweetalert2';
-import { useState, useEffect, useContext } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { ModalUpdateProject } from '..';
+import { TaskList, UpdateStatus } from '../../interfaces';
+import { useDeleteTask, useUpdateTaskStatus } from '../../hooks';
+import { useContext } from 'react';
 import { TaskContext } from '../../contexts';
 import { useParams } from 'react-router';
+import Swal from 'sweetalert2';
 
 export const TaskTable = () => {
     const { projectId } = useParams<{ projectId: string }>();
     const queryClient = useQueryClient();
     const data = queryClient.getQueryData<TaskList[]>(["tasks-list", projectId])
-    const dataTable = data ?? []
 
-    const {openModal, handleOpen, handleAction, handleValuesSelected} = useContext(TaskContext)
+    const {openModal, statusFilter, priorityFilter, handleOpen, handleAction, handleValuesSelected} = useContext(TaskContext)
+    
+    const dataTable = (data ?? []).filter((item) => statusFilter !== "" ? item.status === statusFilter : true)
+    .filter((item) => priorityFilter !== "" ? item.priority === priorityFilter : true)
 
     const handleSelect = (item:TaskList) => {
         handleAction("PUT")
@@ -29,6 +26,32 @@ export const TaskTable = () => {
     }
 
     const deleteTaskStatus = useDeleteTask(projectId ?? "")
+    const updateStatusTask = useUpdateTaskStatus(projectId ?? "")
+
+    const handleDeleteTask = (id: string) => {
+        Swal.fire({
+          title: '¿Estás seguro?',
+          text: 'Esta acción eliminará la tarea permanentemente.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            deleteTaskStatus.mutate(id)
+          }
+        });
+    };
+
+    const handleUpdateStatus = (item:TaskList) => {
+        const data:UpdateStatus = {
+            id: item.id,
+            status: item.status === "Completada" ? "Pendiente" : "Completada"
+        }
+        updateStatusTask.mutate(data)
+    }
 
   return (
     <div className="rounded-xl flex flex-col w-full h-[95%] bg-neutral-background p-2">
@@ -63,7 +86,18 @@ export const TaskTable = () => {
                                 <td><p className="my-2 text-xs xl:text-sm 2xl:text-base 4xl:text-xl text-center">{item.title}</p></td>
                                 <td><p className="my-2 text-xs xl:text-sm 2xl:text-base 4xl:text-xl text-center">{item.descripcion}</p></td>
                                 <td><p className="my-2 text-xs xl:text-sm 2xl:text-base 4xl:text-xl text-center">{item.endDate}</p></td>
-                                <td><p className="my-2 text-xs xl:text-sm 2xl:text-base 4xl:text-xl text-center">{item.status}</p></td>
+                                <td>
+                                    <div className="flex items-center justify-center gap-2">
+                                        <Switch
+                                            checked={item.status === "Pendiente"}
+                                            onChange={() => handleUpdateStatus(item)}
+                                            color="primary"
+                                        />
+                                        <span className="text-xs xl:text-sm 2xl:text-base 4xl:text-xl">
+                                            {item.status}
+                                        </span>
+                                    </div>
+                                </td>
                                 <td><p className="my-2 text-xs xl:text-sm 2xl:text-base 4xl:text-xl text-center capitalize">{item.priority}</p></td>
                                 <td>
                                     <div className='flex justify-center gap-3'>
@@ -73,7 +107,7 @@ export const TaskTable = () => {
                                             </IconButton>
                                         </Tooltip>
                                         <Tooltip title="Eliminar Tarea">
-                                            <IconButton className='!p-0' onClick={() => deleteTaskStatus.mutate(item.id)}>
+                                            <IconButton className='!p-0' onClick={() => handleDeleteTask(item.id)}>
                                                 <BlockOutlinedIcon sx={{color:"#C92323"}} />
                                             </IconButton>
                                         </Tooltip>

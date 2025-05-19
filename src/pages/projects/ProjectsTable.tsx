@@ -1,17 +1,14 @@
-import { TextField, InputAdornment, IconButton, Button, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import CloseIcon from '@mui/icons-material/Close';
+import {useContext} from 'react'
+import { IconButton, Tooltip } from '@mui/material';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import { useQueryClient } from '@tanstack/react-query';
 import { ProjectList } from '../../interfaces';
-import { useDeleteProject, useUpdateProject } from '../../hooks';
+import { useDeleteProject } from '../../hooks';
 import Swal from 'sweetalert2';
-import { useState, useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { ModalUpdateProject } from '..';
 import { useNavigate } from 'react-router';
+import { ProjectContext } from '../../contexts';
 
 export const ProjectsTable = () => {
 
@@ -19,31 +16,13 @@ export const ProjectsTable = () => {
 
     const deleteStatus = useDeleteProject()
 
-    const [value, setValue] = useState<ProjectList>({} as ProjectList);
-    const [open, setOpen] = useState<boolean>(false);
-
-    const updateStatus = useUpdateProject()
-
-    const methods = useForm<ProjectList>({
-        mode: "onChange",
-        defaultValues: {
-            id: value.id,
-            name: value.name
-        }
-    });
-
-    const {formState: {isValid}} = methods
-
-    useEffect(() => {
-        methods.setValue("id", value.id)
-        methods.setValue("name", value.name)
-    }, [value]);
-
     const queryClient = useQueryClient();
 
     const data = queryClient.getQueryData<ProjectList[]>(["projects-list"])
 
     const dataTable = data ?? []
+
+    const {handleAction, handleOpen, handleValue, openModal} = useContext(ProjectContext)
 
     const handleDeleteProject = (id: string) => {
         Swal.fire({
@@ -62,46 +41,18 @@ export const ProjectsTable = () => {
         });
     };
 
-    const handleOpenModal = (item:ProjectList) => {
-        setOpen(!open)
-        setValue(item)
-    }
-
-    const onSubmit = (data:ProjectList) => {
-        setOpen(!open)
-        updateStatus.mutate(data)
-    }
-
     const handleViewDetails = (item:ProjectList) => {
         navigate(`/${item.id}`);
-      };
+    };
+
+    const handleOpenModal = (item:ProjectList) => {
+        handleAction("PUT")
+        handleValue(item)
+        handleOpen(!openModal)
+    }
 
   return (
     <div className="rounded-xl flex flex-col w-full h-[95%] bg-neutral-background p-2">
-        <Dialog open={open} fullWidth>
-            <FormProvider {...methods}>
-                <DialogTitle className='flex justify-beetwen w-full items-center'>
-                    <div className='w-[95%]'>
-                        <p className='mb-0 font-semibold'>Actualizacion de Proyecto</p>
-                    </div>
-                    <div className='w-[5%]'>
-                        <IconButton color="inherit" onClick={() => setOpen(!open)} aria-label="close">
-                            <CloseIcon />
-                        </IconButton>
-                    </div>
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Para crear un nuevo proyecto debes darle un nombre
-                    </DialogContentText>
-                    <ModalUpdateProject />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={methods.handleSubmit(onSubmit)} disabled={!isValid} variant="outlined" sx={{width:"15%", fontWeight: 600, backgroundColor: "#00B261", color: "#FFF", border: "0", textTransform: "capitalize",
-                "&:hover":{backgroundColor: "#08663B"}, "&:disabled": { backgroundColor: "transparent", color: "#d9d9d9", fontWeight: 400, border: "1", borderColor: "#d9d9d9" }}}>Actualizar</Button>
-                </DialogActions>
-            </FormProvider>
-        </Dialog>
         <div className='rounded-b-xl h-full w-full overflow-y-auto'>
             {dataTable.length > 0 ? (
                 <table className='w-full'>

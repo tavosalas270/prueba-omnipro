@@ -4,8 +4,8 @@ import { Button, IconButton, Dialog, DialogTitle, DialogContent, DialogContentTe
 import CloseIcon from '@mui/icons-material/Close';
 import { ProjectsTable, ModalCreateUpdateProject } from '..'
 import { ProjectContext } from '../../contexts';
-import { CreateProject } from '../../interfaces';
-import { useGetProjects, usePostProjects } from '../../hooks';
+import { CreateProject, ProjectList } from '../../interfaces';
+import { useGetProjects, usePostProjects, useUpdateProject } from '../../hooks';
 import { showSwal } from '../../utils';
 import Swal from 'sweetalert2';
 
@@ -14,7 +14,7 @@ export const ProjectsMain = () => {
 
     const {isFetching, isSuccess, isError} = useGetProjects()
 
-    const {openModal, handleOpen} = useContext(ProjectContext)
+    const {openModal, valueUpdate, action, handleOpen} = useContext(ProjectContext)
 
     useEffect(() => {
         if (isFetching) {
@@ -27,6 +27,7 @@ export const ProjectsMain = () => {
     }, [isFetching, isSuccess, isError]);
 
     const projectStatus = usePostProjects()
+    const updateProjectStatus = useUpdateProject()
 
     const methods = useForm<CreateProject>({
         mode: "onChange",
@@ -37,9 +38,25 @@ export const ProjectsMain = () => {
 
     const {formState: {isValid}} = methods
 
+    useEffect(() => {
+        if (action === "PUT") {
+          methods.setValue("name", valueUpdate.name)
+        } else {
+          methods.reset()
+        }
+    }, [action, valueUpdate]);
+
     const onSubmit = (data:CreateProject) => {
         handleOpen(!openModal)
-        projectStatus.mutate(data)
+        if (action === "POST") {
+            projectStatus.mutate(data)
+        } else {
+            const dataUpdate:ProjectList = {
+                id: valueUpdate.id,
+                name:data.name
+            }
+            updateProjectStatus.mutate(dataUpdate)
+        }
         methods.reset()
     }
 

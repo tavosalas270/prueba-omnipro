@@ -1,10 +1,10 @@
 import { useEffect, useContext } from 'react'
 import { useForm, FormProvider } from 'react-hook-form';
-import { Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
+import { Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import { TaskTable, ModalCreateTask } from '..'
 import { TaskContext } from '../../contexts';
-import { CreateTask, TaskList } from '../../interfaces';
+import { CreateTask, TaskList, Status } from '../../interfaces';
 import { useGetTasks, usePostTasks, useUpdateTasks } from '../../hooks';
 import { useParams } from 'react-router';
 import { showSwal } from '../../utils';
@@ -14,7 +14,7 @@ export const TaskMain = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const {isFetching, isSuccess, isError} = useGetTasks(projectId ?? "")
 
-  const {handleOpen, handleAction, openModal, action, valuesSelected} = useContext(TaskContext)
+  const {handleOpen, handleAction, handleStatus, handlePriority, openModal, action, valuesSelected} = useContext(TaskContext)
 
   useEffect(() => {
     if (isFetching) {
@@ -24,17 +24,14 @@ export const TaskMain = () => {
     } else if (isSuccess) {
       Swal.close()
     }
-}, [isFetching, isSuccess, isError]);
-
-  const today = new Date();
-  const formattedToday = today.toISOString().split('T')[0];
+  }, [isFetching, isSuccess, isError]);
 
   const methods = useForm<CreateTask>({
     mode: "onChange",
     defaultValues: {
       title: "",
       descripcion: "",
-      endDate: formattedToday,
+      endDate: "",
       status: "Pendiente",
       priority: "",
       projectId: projectId
@@ -106,11 +103,39 @@ export const TaskMain = () => {
         </FormProvider>
       </Dialog>
       <div className='w-[80%] h-[90%] flex flex-col gap-y-2'>
-        <Button variant="outlined" onClick={() => handleOpenModal()}
-            sx={{ height:"5%", width:{xl:"15%", dosXl:"10%"},
-            backgroundColor: "#00B261", color: "#FFF", border: "0", textTransform: "capitalize",
-            "&:hover":{backgroundColor: "#08663B"}
-        }}>Crear Tarea</Button>
+        <div className='w-full flex justify-between h-[8%]'>
+          <Button variant="outlined" onClick={() => handleOpenModal()}
+              sx={{ height:"85%", width:{xl:"15%", dosXl:"10%"},
+              backgroundColor: "#00B261", color: "#FFF", border: "0", textTransform: "capitalize",
+              "&:hover":{backgroundColor: "#08663B"}
+          }}>Crear Tarea</Button>
+          <div className='h-full w-[80%] flex justify-end gap-4'>
+          <TextField
+              select
+              label="Estado"
+              variant="outlined"
+              sx={{width:"12%"}}
+              onChange={(e) => handleStatus(e.target.value as Status)}
+            >
+              <MenuItem value="">Selecciona un estado</MenuItem>
+              <MenuItem value="Completada">Completada</MenuItem>
+              <MenuItem value="Pendiente">Pendiente</MenuItem>
+            </TextField>
+            <TextField
+              select
+              label="Prioridad"
+              variant="outlined"
+              sx={{width:"10%"}}
+              onChange={(e) => handlePriority(e.target.value)}
+            >
+              <MenuItem value="">Selecciona una prioridad</MenuItem>
+              <MenuItem value="baja">Baja</MenuItem>
+              <MenuItem value="media">Media</MenuItem>
+              <MenuItem value="alta">Alta</MenuItem>
+            </TextField>
+          </div>
+          
+        </div>
         <TaskTable />
       </div>
     </div>

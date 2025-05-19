@@ -1,12 +1,22 @@
 import {useState, useMemo} from 'react';
 import { TaskContext } from '../../contexts';
-import { ChildrenProp, Action, TaskProvider, CreateTask, TaskList } from '../../interfaces';
+import { ChildrenProp, Action, TaskProvider, TaskList, Status } from '../../interfaces';
 
 export const TaskPage = ({children}: ChildrenProp) => {
     
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [action, setAction] = useState<Action>("POST");
     const [valuesSelected, setValuesSelected] = useState<TaskList>({} as TaskList);
+    const [statusFilter, setStatusFilter] = useState<Status>("");
+    const [priorityFilter, setPriorityFilter] = useState("");
+
+    const handlePriority = (value:string) => {
+        setPriorityFilter(value);
+    }
+
+    const handleStatus = (value:Status) => {
+        setStatusFilter(value);
+    }
 
     const handleOpen = (open:boolean) => {
         setOpenModal(open);
@@ -25,11 +35,15 @@ export const TaskPage = ({children}: ChildrenProp) => {
             openModal,
             action,
             valuesSelected,
+            statusFilter,
+            priorityFilter,
             handleOpen,
             handleAction,
-            handleValuesSelected
+            handleValuesSelected,
+            handleStatus,
+            handlePriority
         }),
-        [openModal, action]
+        [openModal, action, valuesSelected, statusFilter, priorityFilter]
     );
 
     return (

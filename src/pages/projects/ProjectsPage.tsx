@@ -1,14 +1,19 @@
 import {useState, useMemo} from 'react';
 import { ProjectContext } from '../../contexts';
-import { ChildrenProp, ProjectList, ProjectProvider } from '../../interfaces';
+import { ChildrenProp, ProjectList, ProjectProvider, Action } from '../../interfaces';
 
 export const ProjectsPage = ({children}: ChildrenProp) => {
     
     const [openModal, setOpenModal] = useState<boolean>(false);
+    const [action, setAction] = useState<Action>("POST");
     const [valueUpdate, setValueUpdate] = useState<ProjectList>({} as ProjectList);
 
     const handleValue = (value:ProjectList) => {
         setValueUpdate(value);
+    }
+    
+    const handleAction = (action:Action) => {
+        setAction(action);
     }
 
     const handleOpen = (open:boolean) => {
@@ -19,10 +24,12 @@ export const ProjectsPage = ({children}: ChildrenProp) => {
         () => ({
             openModal,
             valueUpdate,
+            action,
             handleOpen,
-            handleValue
+            handleValue,
+            handleAction
         }),
-        [openModal, valueUpdate]
+        [openModal, valueUpdate, action]
     );
 
     return (

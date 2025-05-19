@@ -41,6 +41,46 @@
       "priority": "baja",
       "projectId": "50bb",
       "active": false
+    },
+    {
+      "id": "c871",
+      "title": "Hola",
+      "descripcion": "",
+      "endDate": "",
+      "status": "Completada",
+      "priority": "media",
+      "projectId": "1",
+      "active": true
+    },
+    {
+      "id": "05aa",
+      "title": "miraaa",
+      "descripcion": "",
+      "endDate": "",
+      "status": "Pendiente",
+      "priority": "alta",
+      "projectId": "50bb",
+      "active": false
+    },
+    {
+      "id": "c963",
+      "title": "Otra",
+      "descripcion": "",
+      "endDate": "2025-05-20",
+      "status": "Pendiente",
+      "priority": "media",
+      "projectId": "1",
+      "active": true
+    },
+    {
+      "id": "3a43",
+      "title": "Menos",
+      "descripcion": "",
+      "endDate": "",
+      "status": "Completada",
+      "priority": "alta",
+      "projectId": "1",
+      "active": true
     }
   ]
 }
